@@ -9,4 +9,4 @@
 5. Joel Castillo-Pinto
 ****
 
-![Picture](Screenshot 2025-04-27 at 6.30.29 PM.png)
+![Picture](Screenshot%2025-04-27%at%6.30.29%PM.png)
