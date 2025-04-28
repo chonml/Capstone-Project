@@ -55,7 +55,7 @@ Please place the dataset in the data folder in the **backend/data** folder.
 ## Step 3:
 If you guys want to add more preprocessing to the data (ex. I've replaced at the gender NULLs with imputed values).
 
-If you want to add to preprocessing, go to the= **backend/preprocess.py** file.
+If you want to add to preprocessing, go to the **backend/preprocess.py** file.
 
 If you want to work on queries, go to the **backend/analysis.py**
 
