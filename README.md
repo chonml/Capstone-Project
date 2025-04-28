@@ -1,4 +1,12 @@
 # Capstone Project - LA Crimes Analysis
+***
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
+![PySpark](https://img.shields.io/badge/PySpark-Spark-orange?logo=apache-spark&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green?logo=nodedotjs&logoColor=white)
+![npm](https://img.shields.io/badge/npm-9.x-red?logo=npm&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-blue?logo=tailwindcss&logoColor=white)
+![Apache Spark](https://img.shields.io/badge/Apache%20Spark-3.x-F7DF1E?logo=apache-spark&logoColor=white)
+
 ****
 ## Team Members
 
@@ -8,7 +16,6 @@
 4. Kushal Tirupathi
 5. Joel Castillo-Pinto
 ****
-
 ![Picture](demo.png)
 
 ****
