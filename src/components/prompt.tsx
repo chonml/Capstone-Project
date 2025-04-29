@@ -1,13 +1,62 @@
 // prompt.tsx
 import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
+});
+
+const MapFlyTo = ({ lat, lon }) => {
+  const map = useMap();
+
+  React.useEffect(() => {
+    if (lat && lon) {
+      map.flyTo([lat, lon], 15, {
+        duration: 2, // 2 second smooth fly
+      });
+    }
+  }, [lat, lon, map]);
+
+  return null;
+};
 
 const Prompt = ({ onQuerySubmit }) => {
   const [query, setQuery] = useState('');
+  const [location, setLocation] = useState(null);  // { lat: number, lon: number }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onQuerySubmit(query);  // Send query up to parent
-    setQuery('');  // Clear input field
+    onQuerySubmit(query);
+
+    // Geocode the query
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+    if (data.length > 0) {
+      setLocation({
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+      });
+    } else {
+      alert('Location not found!');
+      setLocation(null);
+    }
+
+    const response_prompt = await fetch('http://localhost:8000/summarize_area', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address: query }),
+    });
+
+    const data_prompt = await response_prompt.json();
+
+    onQuerySubmit(data_prompt.summary);  // <--- assuming you passed down a function to handle it
+
+    setQuery('');
   };
 
   return (
@@ -32,6 +81,28 @@ const Prompt = ({ onQuerySubmit }) => {
             Analyze
           </button>
         </form>
+
+        {/* Show the map if a location is found */}
+        {location && (
+          <div className="mt-10">
+            <MapContainer
+              center={[location.lat, location.lon]}
+              zoom={15}
+              style={{ height: '400px', width: '100%' }}
+            >
+              <TileLayer
+                attribution='&copy; OpenStreetMap contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[location.lat, location.lon]}>
+                <Popup>
+                  {query}
+                </Popup>
+              </Marker>
+              <MapFlyTo lat={location.lat} lon={location.lon} />
+            </MapContainer>
+          </div>
+        )}
       </div>
     </section>
   );
