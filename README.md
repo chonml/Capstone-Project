@@ -16,7 +16,7 @@
 4. Kushal Tirupathi
 5. Joel Castillo-Pinto
 ****
-![Picture](demo.png)
+![Picture](demo2.png)
 
 ****
 ## Prerequisites
