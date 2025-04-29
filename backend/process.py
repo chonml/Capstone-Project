@@ -1,5 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
+from pyspark.sql.types import StringType
+from geopy.geocoders import Nominatim
 
 
 def create_session(data_path):
@@ -11,6 +13,22 @@ def create_session(data_path):
     df = spark.read.option("header", "true").csv(data_path)
 
     return df
+
+def create_geo_embedding(df):
+    """
+    Function to convert addresses to long and lat coordinates for mapping
+    """
+    geolocator = Nominatim(user_agent="create_location")
+
+    def geocode_address(location):
+        if location:
+            loc = geolocator.geocode(location)
+            if loc:
+                return f"{loc.latitude},{loc.longitude}"
+        return None
+
+    geocode_udf = F.udf(geocode_address, StringType())
+    df = df.withColumn("coordinates", geocode_udf(F.col("LOCATION")))
 
 
 def clean_and_impute(df, column_name):
@@ -63,14 +81,18 @@ def show_columns(df):
 if __name__ == "__main__":
     df = create_session("data/Crime_Data_from_2020_to_Present.csv")
 
+    print(df.filter(F.col("LOCATION").isNull()).count())
+
     df_imputed = clean_and_impute(df, "Vict Sex")
 
-    df_imputed.select("Vict Sex").show(truncate=False)
-    null_count = df_imputed.filter(df_imputed["Vict Sex"].isNull()).count()
-    print(f"Number of NULL values in 'Vict Sex': {null_count}")
+    # df_imputed.select("Vict Sex").show(truncate=False)
+    # null_count = df_imputed.filter(df_imputed["Vict Sex"].isNull()).count()
+    # print(f"Number of NULL values in 'Vict Sex': {null_count}")
 
     show_columns(df_imputed)
     print("\n")
+    create_geo_embedding(df_imputed)
+
 
     df_imputed.coalesce(1) \
         .write \
