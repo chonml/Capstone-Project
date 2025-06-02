@@ -26,5 +26,4 @@ data/Crime_Data_from_2020_to_Present.csv
 
 .env
 
-/backend/data/Crime_Data_from_2020_to_Present.csv
-/backend/data/processed_df.csv
+/backend/data/*.csv

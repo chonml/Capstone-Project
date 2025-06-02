@@ -3,6 +3,22 @@
 @tailwind utilities;
 
 
+@font-face {
+  font-family: 'Old London';
+  src: url('/src/fonts/OldLondon.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.leaflet-popup-content-wrapper.custom-popup {
+  background-color: #dc2626; /* Tailwind red-600 */
+  color: red;
+  font-weight: 600;
+}
+.leaflet-popup-tip.custom-popup {
+  background-color: #dc2626;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

@@ -1,22 +1,25 @@
-// summary.tsx
 import React from 'react';
 
 const Summary = ({ queryResult }) => {
   return (
-    <section className="bg-white py-10 px-6">
-      <div className="text-center">
-        <h3 className="text-3xl font-bold text-gray-800 mb-4">Location Summary</h3>
+    <section className="flex items-center justify-center mt-10">
+      <div className="mb-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg max-w-4xl p-10">
+        <h3 className="text-4xl font-bold text-white mb-8 text-center drop-shadow-md">
+          AI Location Summary
+        </h3>
+
         {queryResult ? (
-          <>
-            <div className="bg-gray-100 p-6 rounded-lg shadow-lg mb-6">
-              <pre className="text-md font-arial text-gray-800 whitespace-pre-wrap break-words">{queryResult}</pre>
-            </div>
-          </>
+          <div className="space-y-2 text-white text-lg leading-relaxed font-sans">
+            {queryResult.split('\n').map((line, idx) => (
+              <p key={idx} className="drop-shadow-md ">{line}</p>
+            ))}
+          </div>
         ) : (
-          <p className="text-lg text-gray-600">No results yet. Please enter a query above.</p>
+          <p className="text-lg text-gray-300 text-center">No results yet. Please enter a query above.</p>
         )}
       </div>
     </section>
+
   );
 };
 
