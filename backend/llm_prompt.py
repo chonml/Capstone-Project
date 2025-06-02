@@ -3,8 +3,10 @@ from flask_cors import CORS
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.llms import Together
-from transformers import pipeline
 import os
+import subprocess
+import json
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -17,6 +19,30 @@ llm = Together(
     max_tokens=512,
     together_api_key=TOGETHER_API_KEY
 )
+
+@app.route("/nearby_crimes", methods=["POST"])
+def nearby_crimes():
+    data = request.get_json()
+    lat = data.get("lat")
+    lon = data.get("lon")
+
+    if lat is None or lon is None:
+        return jsonify({"error": "Missing coordinates"}), 400
+    try:
+        result = subprocess.run(
+            ["spark-submit", "crime_radius.py", str(lat), str(lon), "part-00000-be8fe0f4-281e-4016-b734-0e1ba5243a81-c000.csv"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        crimes = json.loads(result.stdout)
+        return jsonify({"crimes": crimes})
+    except subprocess.CalledProcessError as e:
+        print("STDOUT:\n", e.stdout)
+        print("STDERR:\n", e.stderr)
+        traceback.print_exc()
+        return jsonify({"error": "Spark job failed", "stdout": e.stdout, "stderr": e.stderr}), 500
 
 @app.route("/summarize_area", methods=["POST"])
 def summarize_area():
