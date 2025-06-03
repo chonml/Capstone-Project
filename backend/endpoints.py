@@ -36,6 +36,56 @@ llm = Together(
     together_api_key=TOGETHER_API_KEY
 )
 
+@app.route("/api/visuals/area", methods=["POST"])
+def create_chart_area():
+    df = spark.read.jdbc(url=jdbc_url, table="crimes_data", properties=props)
+    df.createOrReplaceTempView("crimes_data")
+
+    area_df = spark.sql("SELECT `AREA NAME` AS area, COUNT(*) AS total FROM crimes_data GROUP BY `AREA NAME` ORDER BY total DESC")
+
+    result = area_df.toJSON().map(lambda x: json.loads(x)).collect()
+    return jsonify(result)
+
+@app.route("/api/visuals/vicinity", methods=["POST"])
+def create_chart_vicinity():
+    df = spark.read.jdbc(url=jdbc_url, table="crimes_data", properties=props)
+    df.createOrReplaceTempView("crimes_data")
+
+    vicinity_df = spark.sql("""
+        SELECT `Premis Desc` AS location, COUNT(*) AS total
+        FROM crimes_data
+        GROUP BY `Premis Desc`
+        ORDER BY total DESC
+        LIMIT 10
+    """)
+
+    result = vicinity_df.toJSON().map(lambda x: json.loads(x)).collect()
+    return jsonify(result)
+
+@app.route("/api/visuals/time", methods=["POST"])
+def crime_time_chart():
+    df = spark.read.jdbc(url=jdbc_url, table="crimes_data", properties=props)
+    df.createOrReplaceTempView("crimes_data")
+
+    pie_query = """
+        SELECT 
+            CASE 
+                WHEN `TIME OCC` BETWEEN 0 AND 559 THEN 'Late Night'
+                WHEN `TIME OCC` BETWEEN 600 AND 1159 THEN 'Morning'
+                WHEN `TIME OCC` BETWEEN 1200 AND 1759 THEN 'Afternoon'
+                ELSE 'Evening'
+            END AS time_of_day,
+            COUNT(*) AS total
+        FROM crimes_data
+        GROUP BY time_of_day
+        ORDER BY total DESC
+    """
+
+    time_df = spark.sql(pie_query)
+    result = time_df.toJSON().map(lambda x: json.loads(x)).collect()
+    return jsonify(result)
+
+
 @app.route("/nearby_crimes", methods=["POST"])
 def nearby_crimes():
     data = request.get_json()
