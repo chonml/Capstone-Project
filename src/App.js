@@ -91,8 +91,8 @@ const App = () => {
           <div ref={resultsRef}>
             <CrimeMap location={location} crimes={nearbyCrimes} />
             <Summary queryResult={queryResult} />
-            <About />
             <Overall />
+            <About />
           </div>
         )}
       </div>

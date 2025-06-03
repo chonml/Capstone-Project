@@ -8,9 +8,9 @@ const About = () => {
         <div className="flex justify-center space-x-40">
           <div className="text-center">
             <img
-              src="https://via.placeholder.com/150"
+              src="/trisha.png"
               alt="Team Member 1"
-              className="w-32 h-32 rounded-full mx-auto mb-4"
+              className="w-32 h-32 rounded-full mx-auto mb-4 drop-shadow-md"
             />
             <p className="font-semibold text-white" style = {{textShadow: '2px 2px 4px rgba(0, 0, 0, 6)',}}>Trisha Siva</p>
             <p className="text-white">UI/UX</p>
@@ -44,7 +44,7 @@ const About = () => {
           </div>
           <div className="text-center">
             <img
-              src="https://via.placeholder.com/150"
+              src="/IMG_1187.png"
               alt="Team Member 3"
               className="w-32 h-32 rounded-full mx-auto mb-4"
             />
